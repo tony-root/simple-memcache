@@ -10,3 +10,12 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Local build scripts
+build-local/
+
+# Output of goreleaser
+dist/
+
+# IntelliJ config files
+.idea/
