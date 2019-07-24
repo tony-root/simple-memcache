@@ -1,33 +1,33 @@
 package domain
 
 type Engine interface {
-	Register(processor CommandHandler)
-	Execute(rawCommand *RawCommand) interface{}
+	SetString(key string, value string)
+	GetString(key string) (string, error)
 }
 
 type engine struct {
-	processors map[string]CommandHandler
-	cache      map[string]interface{}
+	storage map[string]interface{}
 }
 
 func NewEngine() *engine {
-	return &engine{}
+	return &engine{
+		storage: map[string]interface{}{},
+	}
 }
 
-func (e *engine) Register(processor CommandHandler) {
-	e.processors[processor.CommandName()] = processor
+func (e *engine) SetString(key string, value string) {
+	e.storage[key] = value
 }
 
-func (e *engine) Execute(rawCommand *RawCommand) interface{} {
-	processor := e.processors[rawCommand.Name]
-	if processor == nil {
-		return ErrorResult{Value: ErrUnknownCommand}
+func (e *engine) GetString(key string) (string, error) {
+	value := e.storage[key]
+	if value == nil {
+		return "", nil
 	}
 
-	command, err := processor.Decode(rawCommand)
-	if err != nil {
-		return ErrorResult{Value: ErrMalformedCommand}
+	strValue, ok := value.(string)
+	if !ok {
+		return "", Errorf(CodeWrongType, "%s is not of string type", key)
 	}
-
-	return processor.Process(e.cache, command)
+	return strValue, nil
 }

@@ -4,8 +4,9 @@ import (
 	"github.com/antonrutkevich/simple-memcache/config"
 	"github.com/antonrutkevich/simple-memcache/pkg/domain"
 	"github.com/antonrutkevich/simple-memcache/pkg/infrastructure/log"
-	"github.com/antonrutkevich/simple-memcache/pkg/infrastructure/transport/telnet"
-	"github.com/antonrutkevich/simple-memcache/pkg/memcache"
+	"github.com/antonrutkevich/simple-memcache/pkg/infrastructure/resp"
+	"github.com/antonrutkevich/simple-memcache/pkg/infrastructure/resp/handlers"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -17,16 +18,23 @@ var (
 func main() {
 	conf := config.MustLoad()
 	logger := log.CreateLogger(conf.Log)
+	engine := domain.NewEngine()
+
+	stringsApi := handlers.NewStringApi(logger, engine)
+
+	mux := resp.NewMux()
+	mux.Add("GET", stringsApi.Get())
+	mux.Add("SET", stringsApi.Set())
 
 	logger.Infof("Starting memcache %s:%s from %s on port %s\n", version, commit, date, conf.Server.Port)
 
+	server := resp.Server{
+		Addr:    conf.Server.Port,
+		Logger:  logger,
+		Handler: mux,
+	}
 
+	err := server.ListenAndServe()
 
-	memcache.NewMemCache(
-		conf.Server,
-		logger,
-		telnet.NewEncoder(),
-		telnet.NewDecoder(),
-		domain.NewEngine(),
-	)
+	logger.Fatalf("%+v", errors.Wrap(err, "Internal error"))
 }
