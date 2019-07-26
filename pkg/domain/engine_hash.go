@@ -10,83 +10,83 @@ type HashEngine interface {
 }
 
 func (e *engine) HSet(key, field, value string) (int, error) {
-	stringMap, err := castToMap(key, e.getOrCreateMap(key))
+	mapString, err := e.getOrCreateMap(key)
 	if err != nil {
 		return -1, err
 	}
 
-	previous := stringMap[field]
+	previous := mapString[field]
 
-	stringMap[field] = value
-
-	e.storage[key] = stringMap
+	mapString[field] = value
 
 	if previous == "" {
 		return 1, nil
 	}
 
+	e.setMap(key, mapString)
+
 	return 0, nil
 }
 
 func (e *engine) HMultiSet(key string, entries map[string]string) error {
-	stringMap, err := castToMap(key, e.getOrCreateMap(key))
+	mapString, err := e.getOrCreateMap(key)
 	if err != nil {
 		return err
 	}
 
 	for k, v := range entries {
-		stringMap[k] = v
+		mapString[k] = v
 	}
 
-	e.storage[key] = stringMap
+	e.setMap(key, mapString)
 
 	return nil
 }
 
 func (e *engine) HGet(key string, field string) (string, error) {
-	stringMap, err := castToMap(key, e.getExistingMap(key))
+	mapString, err := e.getMap(key)
 	if err != nil {
 		return "", err
 	}
 
-	if stringMap == nil {
+	if mapString == nil {
 		return "", nil
 	}
 
-	return stringMap[field], nil
+	return mapString[field], nil
 }
 
 func (e *engine) HMultiGet(key string, fields []string) ([]string, error) {
-	stringMap, err := castToMap(key, e.getExistingMap(key))
+	mapString, err := e.getMap(key)
 	if err != nil {
 		return nil, err
 	}
 
 	result := make([]string, len(fields))
 
-	if stringMap == nil {
+	if mapString == nil {
 		return result, nil
 	}
 
 	for i, field := range fields {
-		result[i] = stringMap[field]
+		result[i] = mapString[field]
 	}
 
 	return result, nil
 }
 
 func (e *engine) HGetAll(key string) ([]string, error) {
-	stringMap, err := castToMap(key, e.getExistingMap(key))
+	mapString, err := e.getMap(key)
 	if err != nil {
 		return nil, err
 	}
 
-	if stringMap == nil {
+	if mapString == nil {
 		return make([]string, 0, 0), nil
 	}
 
-	result := make([]string, 0, 2*len(stringMap))
-	for k, v := range stringMap {
+	result := make([]string, 0, 2*len(mapString))
+	for k, v := range mapString {
 		result = append(result, k, v)
 	}
 
@@ -94,49 +94,25 @@ func (e *engine) HGetAll(key string) ([]string, error) {
 }
 
 func (e *engine) HDelete(key string, fields []string) (int, error) {
-	stringMap, err := castToMap(key, e.getExistingMap(key))
+	mapString, err := e.getMap(key)
 	if err != nil {
 		return -1, err
 	}
 
 	deleted := 0
 
-	if stringMap == nil {
+	if mapString == nil {
 		return deleted, nil
 	}
 
 	for _, field := range fields {
-		if stringMap[field] != "" {
+		if mapString[field] != "" {
 			deleted++
 		}
-		stringMap[field] = ""
+		mapString[field] = ""
 	}
 
-	e.storage[key] = stringMap
+	e.setMap(key, mapString)
 
 	return deleted, nil
-}
-
-func (e *engine) getOrCreateMap(key string) interface{} {
-	entry := e.storage[key]
-	if entry == nil {
-		entry = map[string]string{}
-	}
-	return entry
-}
-
-func (e *engine) getExistingMap(key string) interface{} {
-	return e.storage[key]
-}
-
-func castToMap(key string, mapInterface interface{}) (map[string]string, error) {
-	if mapInterface == nil {
-		return nil, nil
-	}
-
-	currentMap, ok := mapInterface.(map[string]string)
-	if !ok {
-		return nil, Errorf(CodeWrongType, "%s is not of map type", key)
-	}
-	return currentMap, nil
 }

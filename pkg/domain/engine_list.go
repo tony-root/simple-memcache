@@ -9,93 +9,77 @@ type ListEngine interface {
 }
 
 func (e *engine) LLeftPop(key string) (string, error) {
-	value := e.storage[key]
-	if value == nil {
-		return "", nil
-	}
-
-	listValue, err := castToList(key, value)
+	listString, err := e.getList(key)
 	if err != nil {
 		return "", err
 	}
 
-	if len(listValue) == 0 {
+	if len(listString) == 0 {
 		return "", nil
 	}
 
-	leftmost := listValue[0]
+	leftmost := listString[0]
 
-	e.storage[key] = listValue[1:]
+	e.setList(key, listString[1:])
 
 	return leftmost, nil
 }
 
 func (e *engine) LRightPop(key string) (string, error) {
-	value := e.storage[key]
-	if value == nil {
-		return "", nil
-	}
-
-	listValue, err := castToList(key, value)
+	listString, err := e.getList(key)
 	if err != nil {
 		return "", err
 	}
 
-	listLen := len(listValue)
+	listLen := len(listString)
 	if listLen == 0 {
 		return "", nil
 	}
 
-	rightmost := listValue[listLen-1]
+	rightmost := listString[listLen-1]
 
-	e.storage[key] = listValue[:listLen-1]
+	e.setList(key, listString[:listLen-1])
 
 	return rightmost, nil
 }
 
 func (e *engine) LLeftPush(key string, values []string) (int, error) {
-	entry := e.getOrCreateList(key)
-
-	listValue, err := castToList(key, entry)
+	listString, err := e.getOrCreateList(key)
 	if err != nil {
 		return -1, err
 	}
 
-	listValue = append(reverseSlice(values), listValue...)
+	listString = append(reverseSlice(values), listString...)
 
-	e.storage[key] = listValue
+	e.setList(key, listString)
 
-	listLen := len(listValue)
+	listLen := len(listString)
 
 	return listLen, nil
 }
 
 func (e *engine) LRightPush(key string, values []string) (int, error) {
-	entry := e.getOrCreateList(key)
-
-	listValue, err := castToList(key, entry)
+	listString, err := e.getOrCreateList(key)
 	if err != nil {
 		return -1, err
 	}
 
-	listValue = append(listValue, values...)
+	listString = append(listString, values...)
 
-	e.storage[key] = listValue
+	e.setList(key, listString)
 
-	listLen := len(listValue)
+	listLen := len(listString)
 
 	return listLen, nil
 }
 
 func (e *engine) LRange(key string, start int, end int) ([]string, error) {
-	entry := e.getOrCreateList(key)
-
-	listValue, err := castToList(key, entry)
+	listString, err := e.getList(key)
 	if err != nil {
 		return nil, err
 	}
 
-	listLen := len(listValue)
+	listLen := len(listString)
 
 	if start > listLen-1 {
 		return []string{}, nil
@@ -120,23 +104,7 @@ func (e *engine) LRange(key string, start int, end int) ([]string, error) {
 		return []string{}, nil
 	}
 
-	return listValue[start:end], nil
-}
-
-func (e *engine) getOrCreateList(key string) interface{} {
-	currentEntry := e.storage[key]
-	if currentEntry == nil {
-		currentEntry = []string{}
-	}
-	return currentEntry
-}
-
-func castToList(key string, listInterface interface{}) ([]string, error) {
-	currentList, ok := listInterface.([]string)
-	if !ok {
-		return nil, Errorf(CodeWrongType, "%s is not of list type", key)
-	}
-	return currentList, nil
+	return listString[start:end], nil
 }
 
 func reverseSlice(s []string) []string {
