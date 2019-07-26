@@ -23,6 +23,7 @@ func main() {
 	stringsApi := handlers.NewStringApi(logger, engine)
 	listApi := handlers.NewListApi(logger, engine)
 	hashApi := handlers.NewHashApi(logger, engine)
+	keyApi := handlers.NewKeyApi(logger, engine)
 
 	mux := resp.NewMux()
 	mux.Add("GET", stringsApi.Get())
@@ -40,6 +41,8 @@ func main() {
 	mux.Add("HSET", hashApi.Set())
 	mux.Add("HMSET", hashApi.MultiSet())
 	mux.Add("HDEL", hashApi.Delete())
+
+	mux.Add("DEL", keyApi.Delete())
 
 	logger.Infof("Starting memcache %s:%s from %s on port %s\n", version, commit, date, conf.Server.Port)
 
