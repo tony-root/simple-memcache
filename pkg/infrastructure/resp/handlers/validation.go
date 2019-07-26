@@ -30,3 +30,11 @@ func parseInt(stringInt string) (int, error) {
 	}
 	return integer, nil
 }
+
+func validateEntriesEven(entries []string) error {
+	if len(entries)%2 != 0 {
+		return domain.Errorf(domain.CodeWrongNumberOfArguments,
+			"list does not have matching (even) number of fields and values: %d", len(entries))
+	}
+	return nil
+}

@@ -35,8 +35,12 @@ func BulkString(value string) *rBulkString {
 }
 
 func (r rBulkString) Marshal() []byte {
-	byteLength := strconv.Itoa(len(r.value))
-	return []byte("$" + byteLength + delimiter + r.value + delimiter)
+	byteLen := len(r.value)
+	if byteLen == 0 {
+		return nilValue
+	}
+
+	return []byte("$" + strconv.Itoa(byteLen) + delimiter + r.value + delimiter)
 }
 
 // Int

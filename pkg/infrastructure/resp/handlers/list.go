@@ -8,12 +8,12 @@ import (
 
 type listApi struct {
 	logger *logrus.Logger
-	engine domain.Engine
+	engine domain.ListEngine
 }
 
 func NewListApi(
 	logger *logrus.Logger,
-	engine domain.Engine,
+	engine domain.ListEngine,
 ) *listApi {
 	return &listApi{logger: logger, engine: engine}
 }
@@ -26,7 +26,7 @@ func (s *listApi) LeftPop() resp.Handler {
 
 		key := req.Args[0]
 
-		result, err := s.engine.LeftPop(key)
+		result, err := s.engine.LLeftPop(key)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +47,7 @@ func (s *listApi) RightPop() resp.Handler {
 
 		key := req.Args[0]
 
-		result, err := s.engine.RightPop(key)
+		result, err := s.engine.LRightPop(key)
 		if err != nil {
 			return nil, err
 		}
@@ -69,7 +69,7 @@ func (s *listApi) LeftPush() resp.Handler {
 		key := req.Args[0]
 		values := req.Args[1:]
 
-		listSize, err := s.engine.LeftPush(key, values)
+		listSize, err := s.engine.LLeftPush(key, values)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +87,7 @@ func (s *listApi) RightPush() resp.Handler {
 		key := req.Args[0]
 		values := req.Args[1:]
 
-		listSize, err := s.engine.RightPush(key, values)
+		listSize, err := s.engine.LRightPush(key, values)
 		if err != nil {
 			return nil, err
 		}
@@ -114,7 +114,7 @@ func (s *listApi) Range() resp.Handler {
 			return nil, err
 		}
 
-		values, err := s.engine.Range(key, min, max)
+		values, err := s.engine.LRange(key, min, max)
 		if err != nil {
 			return nil, err
 		}

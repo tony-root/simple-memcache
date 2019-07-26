@@ -8,12 +8,12 @@ import (
 
 type stringApi struct {
 	logger *logrus.Logger
-	engine domain.Engine
+	engine domain.StringEngine
 }
 
 func NewStringApi(
 	logger *logrus.Logger,
-	engine domain.Engine,
+	engine domain.StringEngine,
 ) *stringApi {
 	return &stringApi{logger: logger, engine: engine}
 }
@@ -27,7 +27,7 @@ func (s *stringApi) Set() resp.Handler {
 		key := req.Args[0]
 		value := req.Args[1]
 
-		s.engine.SetString(key, value)
+		s.engine.SSet(key, value)
 
 		return resp.OK(), nil
 	})
@@ -41,7 +41,7 @@ func (s *stringApi) Get() resp.Handler {
 
 		key := req.Args[0]
 
-		result, err := s.engine.GetString(key)
+		result, err := s.engine.SGet(key)
 		if err != nil {
 			return nil, err
 		}
