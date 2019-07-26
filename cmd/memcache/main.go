@@ -17,14 +17,21 @@ var (
 
 func main() {
 	conf := config.MustLoad()
-	logger := log.CreateLogger(conf.Log)
+	logger := log.NewLogger(conf.Log)
 	engine := domain.NewEngine()
 
 	stringsApi := handlers.NewStringApi(logger, engine)
+	listApi := handlers.NewListApi(logger, engine)
 
 	mux := resp.NewMux()
 	mux.Add("GET", stringsApi.Get())
 	mux.Add("SET", stringsApi.Set())
+
+	mux.Add("LPOP", listApi.LeftPop())
+	mux.Add("RPOP", listApi.RightPop())
+	mux.Add("LPUSH", listApi.LeftPush())
+	mux.Add("RPUSH", listApi.RightPush())
+	mux.Add("LRANGE", listApi.Range())
 
 	logger.Infof("Starting memcache %s:%s from %s on port %s\n", version, commit, date, conf.Server.Port)
 

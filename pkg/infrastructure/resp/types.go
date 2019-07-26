@@ -1,7 +1,6 @@
 package resp
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -36,7 +35,6 @@ func BulkString(value string) *rBulkString {
 }
 
 func (r rBulkString) Marshal() []byte {
-	fmt.Printf("Marshaling %s", r.value)
 	byteLength := strconv.Itoa(len(r.value))
 	return []byte("$" + byteLength + delimiter + r.value + delimiter)
 }
@@ -78,7 +76,6 @@ func (r rArray) Marshal() []byte {
 
 	for _, v := range r.values {
 		builder.Write(BulkString(v).Marshal())
-		builder.WriteString(delimiter)
 	}
 
 	return []byte(builder.String())

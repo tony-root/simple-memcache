@@ -13,6 +13,7 @@ var (
 	CodeUnknownCommand         = ErrorCode("UNKNOWN_COMMAND")
 	CodeProtocolError          = ErrorCode("PROTOCOL_ERROR")
 	CodeWrongNumberOfArguments = ErrorCode("WRONG_NUMBER_OF_ARGS")
+	CodeWrongNumber            = ErrorCode("WRONG_NUMBER")
 )
 
 type ClientError interface {

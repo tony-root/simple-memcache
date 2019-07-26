@@ -8,7 +8,7 @@ import (
 )
 
 // TODO: consider filtering out invalid config values at earlier stages
-func CreateLogger(conf config.LogConf) *logrus.Logger {
+func NewLogger(conf config.LogConf) *logrus.Logger {
 	level, err := logrus.ParseLevel(conf.Level)
 	if err != nil {
 		logrus.Panic(errors.WithMessagef(err, "unknown log level: %s", conf.Level))

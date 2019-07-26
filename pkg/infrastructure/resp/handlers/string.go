@@ -18,12 +18,10 @@ func NewStringApi(
 	return &stringApi{logger: logger, engine: engine}
 }
 
-func (s stringApi) Set() resp.Handler {
+func (s *stringApi) Set() resp.Handler {
 	return resp.HandlerFunc(func(req *resp.Req) (resp.RType, error) {
-		argsRequired := 2
-
-		if len(req.Args) != argsRequired {
-			return nil, wrongArgsNumber(req, argsRequired)
+		if err := validateArgsExact(req, 2); err != nil {
+			return nil, err
 		}
 
 		key := req.Args[0]
@@ -35,12 +33,10 @@ func (s stringApi) Set() resp.Handler {
 	})
 }
 
-func (s stringApi) Get() resp.Handler {
+func (s *stringApi) Get() resp.Handler {
 	return resp.HandlerFunc(func(req *resp.Req) (resp.RType, error) {
-		argsRequired := 1
-
-		if len(req.Args) != 1 {
-			return nil, wrongArgsNumber(req, argsRequired)
+		if err := validateArgsExact(req, 1); err != nil {
+			return nil, err
 		}
 
 		key := req.Args[0]
@@ -56,9 +52,4 @@ func (s stringApi) Get() resp.Handler {
 
 		return resp.BulkString(result), nil
 	})
-}
-
-func wrongArgsNumber(req *resp.Req, argsRequired int) error {
-	return domain.Errorf(domain.CodeWrongNumberOfArguments,
-		"%s requires %d arguments, got %d", req.Command, argsRequired, len(req.Args))
 }

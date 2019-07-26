@@ -1,7 +1,6 @@
 package resp
 
 import (
-	"fmt"
 	"github.com/antonrutkevich/simple-memcache/pkg/domain"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -69,9 +68,11 @@ func (srv *Server) handleConn(c net.Conn) {
 			continue
 		}
 
-		marshalled := result.Marshal()
-		fmt.Printf("will write %s\n", marshalled)
-		_, err = c.Write(marshalled)
+		marshaled := result.Marshal()
+
+		logger.Debugf("Result: %q", marshaled)
+
+		_, err = c.Write(marshaled)
 		if err != nil {
 			logger.WithError(err).Infof("failed to write result to connection, closing")
 			break
