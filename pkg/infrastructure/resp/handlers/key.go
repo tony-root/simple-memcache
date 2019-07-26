@@ -34,7 +34,7 @@ func (s *keyApi) Delete() resp.Handler {
 
 func (s *keyApi) Expire() resp.Handler {
 	return resp.HandlerFunc(func(req *resp.Req) (resp.RType, error) {
-		if err := validateArgsExact(req, 1); err != nil {
+		if err := validateArgsExact(req, 2); err != nil {
 			return nil, err
 		}
 
@@ -51,5 +51,17 @@ func (s *keyApi) Expire() resp.Handler {
 		}
 
 		return resp.Int(timeoutSet), nil
+	})
+}
+
+func (s *keyApi) Ttl() resp.Handler {
+	return resp.HandlerFunc(func(req *resp.Req) (resp.RType, error) {
+		if err := validateArgsExact(req, 1); err != nil {
+			return nil, err
+		}
+
+		key := req.Args[0]
+
+		return resp.Int(s.engine.Ttl(key)), nil
 	})
 }

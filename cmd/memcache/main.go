@@ -43,6 +43,8 @@ func main() {
 	mux.Add("HDEL", hashApi.Delete())
 
 	mux.Add("DEL", keyApi.Delete())
+	mux.Add("EXPIRE", keyApi.Expire())
+	mux.Add("TTL", keyApi.Ttl())
 
 	logger.Infof("Starting memcache %s:%s from %s on port %s\n", version, commit, date, conf.Server.Port)
 
