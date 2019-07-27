@@ -79,7 +79,7 @@ func (e *engine) getString(key string) (string, error) {
 
 	strValue, ok := value.(string)
 	if !ok {
-		return "", Errorf(CodeWrongType, "%s is not of string type", key)
+		return "", errTypeMismatch(key, "string")
 	}
 
 	return strValue, nil
@@ -110,7 +110,7 @@ func castToList(key string, listInterface interface{}) ([]string, error) {
 
 	listString, ok := listInterface.([]string)
 	if !ok {
-		return nil, Errorf(CodeWrongType, "%s is not of list type", key)
+		return nil, errTypeMismatch(key, "list")
 	}
 
 	return listString, nil
@@ -149,7 +149,7 @@ func castToMap(key string, mapInterface interface{}) (map[string]string, error) 
 
 	mapString, ok := mapInterface.(map[string]string)
 	if !ok {
-		return nil, Errorf(CodeWrongType, "%s is not of map type", key)
+		return nil, errTypeMismatch(key, "map")
 	}
 
 	return mapString, nil

@@ -1,10 +1,11 @@
 package resp
 
 import (
-	"github.com/antonrutkevich/simple-memcache/pkg/domain"
+	"sync"
 )
 
 type Mux struct {
+	rwMutex  sync.RWMutex
 	handlers map[string]Handler
 }
 
@@ -13,14 +14,20 @@ func NewMux() *Mux {
 }
 
 func (m *Mux) Add(command string, handler Handler) {
+	m.rwMutex.Lock()
+	defer m.rwMutex.Unlock()
 	m.handlers[command] = handler
 }
 
 func (m *Mux) ServeRESP(req *Req) (RType, error) {
 	command := req.Command
+
+	m.rwMutex.RLock()
 	handler := m.handlers[command]
+	m.rwMutex.RUnlock()
+
 	if handler == nil {
-		return nil, domain.Errorf(domain.CodeUnknownCommand, "'%s' command is not supported", command)
+		return nil, errCommandNotSupported(command)
 	}
 	return handler.ServeRESP(req)
 }

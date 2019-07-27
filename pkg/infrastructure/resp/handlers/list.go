@@ -104,12 +104,12 @@ func (s *listApi) Range() resp.Handler {
 
 		key := req.Args[0]
 
-		min, err := parseInt(req.Args[1])
+		min, err := parseInt(req, req.Args[1])
 		if err != nil {
 			return nil, err
 		}
 
-		max, err := parseInt(req.Args[2])
+		max, err := parseInt(req, req.Args[2])
 		if err != nil {
 			return nil, err
 		}

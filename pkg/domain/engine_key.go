@@ -2,7 +2,7 @@ package domain
 
 type KeyEngine interface {
 	Delete(keys []string) int
-	Expire(key string, seconds int) (int, error)
+	Expire(key string, seconds int) int
 	Ttl(key string) int
 }
 
@@ -19,15 +19,15 @@ func (e *engine) Delete(keys []string) int {
 	return numDeleted
 }
 
-func (e *engine) Expire(key string, seconds int) (int, error) {
+func (e *engine) Expire(key string, seconds int) int {
 	value := e.getKeyCheckExpire(key)
 	if value == nil {
-		return 0, nil
+		return 0
 	}
 
 	e.saveKeyExpire(key, seconds)
 
-	return 1, nil
+	return 1
 }
 
 func (e *engine) Ttl(key string) int {

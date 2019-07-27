@@ -40,15 +40,12 @@ func (s *keyApi) Expire() resp.Handler {
 
 		key := req.Args[0]
 
-		seconds, err := parseInt(req.Args[1])
+		seconds, err := parseInt(req, req.Args[1])
 		if err != nil {
 			return nil, err
 		}
 
-		timeoutSet, err := s.engine.Expire(key, seconds)
-		if err != nil {
-			return nil, err
-		}
+		timeoutSet := s.engine.Expire(key, seconds)
 
 		return resp.Int(timeoutSet), nil
 	})

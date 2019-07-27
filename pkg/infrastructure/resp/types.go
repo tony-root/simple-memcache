@@ -97,9 +97,8 @@ func (rNil) Marshal() []byte {
 }
 
 // Error special case
-func MarshalError(error error) []byte {
-	value := error.Error()
-	return []byte("-" + value + delimiter)
+func MarshalError(errorMessage string) []byte {
+	return []byte("-" + errorMessage + delimiter)
 }
 
 // Predefined values

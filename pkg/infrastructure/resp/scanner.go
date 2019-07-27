@@ -19,7 +19,7 @@ func ReadCommand(c net.Conn) (*rArray, error) {
 	}
 
 	if arrayLen <= 0 {
-		return nil, errors.Errorf("invalid request args length: %d", arrayLen)
+		return nil, errProtocolError("invalid request args length: %d", arrayLen)
 	}
 
 	var entries = make([]string, 0, arrayLen)
@@ -42,7 +42,7 @@ func readArrayLen(reader *bufio.Reader) (int, error) {
 		return -1, errors.WithMessage(err, "failed to read array type byte")
 	}
 	if arrayType != '*' {
-		return -1, errors.Errorf("want '*' as array identifier, got '%c'", arrayType)
+		return -1, errProtocolError("want '*' as array identifier, got '%c'", arrayType)
 	}
 
 	return readLen(reader, maxArrayLength)
@@ -54,7 +54,7 @@ func readBulkString(reader *bufio.Reader) (string, error) {
 		return "", errors.WithMessage(err, "failed to read bulk string type byte")
 	}
 	if bulkStringType != '$' {
-		return "", errors.Errorf("want '$' as bulk string identifier, got '%c'", bulkStringType)
+		return "", errProtocolError("want '$' as bulk string identifier, got '%c'", bulkStringType)
 	}
 
 	bulkStringLength, err := readLen(reader, maxStringLength)
@@ -87,13 +87,13 @@ func readLen(reader *bufio.Reader, maxLength int) (int, error) {
 			return -1, errors.WithMessage(err, "failed to read length byte")
 		}
 		if b < '0' || '9' < b {
-			return -1, errors.Errorf("want digit byte but got '%c'", b)
+			return -1, errProtocolError("want digit byte but got '%c'", b)
 		}
 
 		length = 10*length + int(b-'0')
 
 		if length > maxLength {
-			return -1, errors.Errorf("length exceeds max length of %d", maxLength)
+			return -1, errProtocolError("length exceeds max length of %d", maxLength)
 		}
 	}
 

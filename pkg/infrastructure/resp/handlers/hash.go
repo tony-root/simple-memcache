@@ -44,11 +44,12 @@ func (s *hashApi) MultiSet() resp.Handler {
 		}
 
 		key := req.Args[0]
-		entriesList := req.Args[1:]
 
-		if err := validateEntriesEven(entriesList); err != nil {
+		if err := validateArgsOdd(req); err != nil {
 			return nil, err
 		}
+
+		entriesList := req.Args[1:]
 
 		entriesMap := make(map[string]string, len(entriesList)/2)
 
