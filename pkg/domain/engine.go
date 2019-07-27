@@ -30,8 +30,8 @@ func (e *engine) getKeyCheckExpire(key string) interface{} {
 		return nil
 	}
 
-	expiresAt := e.expires[key]
-	if expiresAt == 0 {
+	expiresAt, ok := e.expires[key]
+	if !ok {
 		return value
 	}
 
@@ -45,8 +45,8 @@ func (e *engine) getKeyCheckExpire(key string) interface{} {
 
 func (e *engine) setKeyClearExpire(key string, value interface{}) {
 	e.storage[key] = value
-	if e.expires[key] != 0 {
-		e.expires[key] = 0
+	if _, ok := e.expires[key]; !ok {
+		delete(e.expires, key)
 	}
 }
 
@@ -60,8 +60,7 @@ func (e *engine) getTtl(key string) int {
 		return -2
 	}
 
-	expiresAt := e.expires[key]
-	if expiresAt == 0 {
+	if _, ok := e.expires[key]; !ok {
 		return -1
 	}
 

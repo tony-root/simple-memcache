@@ -106,10 +106,10 @@ func (e *engine) HDelete(key string, fields []string) (int, error) {
 	}
 
 	for _, field := range fields {
-		if mapString[field] != "" {
+		if _, ok := mapString[field]; ok {
 			deleted++
 		}
-		mapString[field] = ""
+		delete(mapString, field)
 	}
 
 	e.setMap(key, mapString)
