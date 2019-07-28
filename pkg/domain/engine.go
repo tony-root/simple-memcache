@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type expirationUnixNano int64
 
@@ -15,6 +18,7 @@ func (ex expirationUnixNano) seconds() int {
 type engine struct {
 	storage map[string]interface{}
 	expires map[string]expirationUnixNano
+	mu sync.Mutex
 }
 
 func NewEngine() *engine {

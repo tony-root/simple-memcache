@@ -6,9 +6,15 @@ type StringEngine interface {
 }
 
 func (e *engine) SSet(key string, value string) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	e.setString(key, value)
 }
 
 func (e *engine) SGet(key string) (string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	return e.getString(key)
 }

@@ -7,6 +7,9 @@ type KeyEngine interface {
 }
 
 func (e *engine) Delete(keys []string) int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	numDeleted := 0
 	for _, key := range keys {
 		value := e.getKeyCheckExpire(key)
@@ -20,6 +23,9 @@ func (e *engine) Delete(keys []string) int {
 }
 
 func (e *engine) Expire(key string, seconds int) int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	value := e.getKeyCheckExpire(key)
 	if value == nil {
 		return 0
@@ -31,5 +37,8 @@ func (e *engine) Expire(key string, seconds int) int {
 }
 
 func (e *engine) Ttl(key string) int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	return e.getTtl(key)
 }

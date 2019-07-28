@@ -9,6 +9,9 @@ type ListEngine interface {
 }
 
 func (e *engine) LLeftPop(key string) (string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	listString, err := e.getList(key)
 	if err != nil {
 		return "", err
@@ -26,6 +29,9 @@ func (e *engine) LLeftPop(key string) (string, error) {
 }
 
 func (e *engine) LRightPop(key string) (string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	listString, err := e.getList(key)
 	if err != nil {
 		return "", err
@@ -44,6 +50,9 @@ func (e *engine) LRightPop(key string) (string, error) {
 }
 
 func (e *engine) LLeftPush(key string, values []string) (int, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	listString, err := e.getOrCreateList(key)
 	if err != nil {
 		return -1, err
@@ -59,6 +68,9 @@ func (e *engine) LLeftPush(key string, values []string) (int, error) {
 }
 
 func (e *engine) LRightPush(key string, values []string) (int, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	listString, err := e.getOrCreateList(key)
 	if err != nil {
 		return -1, err
@@ -74,6 +86,9 @@ func (e *engine) LRightPush(key string, values []string) (int, error) {
 }
 
 func (e *engine) LRange(key string, start int, end int) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	listString, err := e.getList(key)
 	if err != nil {
 		return nil, err

@@ -96,11 +96,27 @@ Just run the binary.
  * `KEYS pattern` command. Performance must be considered carefully when implementing.
  * Disk storage.  
 
-### Performance 
-* Shortcuts for common cases
-  * Marshaling empty/short lists
-* Using linked-list instead of slices for lists. 
-Currently memory allocated by list entries is not cleaned up until the list key is deleted. 
+### Performance
+Due to time constraints it sucks currently :) So there's a lot to improve.
+
+Always measure!
+Check which type of interaction you are optimizing!
+Keep in mind, that server is accessed over network,
+which might be orders of magnitude slower than actual request processing for simple requests.
+Mem-profile methods to see if any memory allocations can be avoided.
+
+* Concurrent reads/writes of single key.
+  * Consider using sync.RWMutex.
+   Current issue with it is that expired key can be deleted on access.
+* Concurrent reads/writes of different keys.
+  * Create map of per-key locks and avoid locking entire map.
+  * With per-key locks, consider limiting the number of goroutines to GOMAXPROCS or so.
+   The bottleneck is most probably CPU-bound.
+* `string`, `list`, `map` specific operations
+  * Marshaling empty/short lists.
+  * Using [linked-list](https://golang.org/pkg/container/list/) instead of slices for lists,
+ as growing and copying slices is expensive.
+ Memory allocated by list entries is not cleaned up until the list key is deleted.
 
 ### Architecture 
 * Wrap logrus.Logger as implementation detail

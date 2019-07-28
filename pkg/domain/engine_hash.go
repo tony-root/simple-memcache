@@ -10,6 +10,9 @@ type HashEngine interface {
 }
 
 func (e *engine) HSet(key, field, value string) (int, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getOrCreateMap(key)
 	if err != nil {
 		return -1, err
@@ -29,6 +32,9 @@ func (e *engine) HSet(key, field, value string) (int, error) {
 }
 
 func (e *engine) HMultiSet(key string, entries map[string]string) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getOrCreateMap(key)
 	if err != nil {
 		return err
@@ -44,6 +50,9 @@ func (e *engine) HMultiSet(key string, entries map[string]string) error {
 }
 
 func (e *engine) HGet(key string, field string) (string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getMap(key)
 	if err != nil {
 		return "", err
@@ -57,6 +66,9 @@ func (e *engine) HGet(key string, field string) (string, error) {
 }
 
 func (e *engine) HMultiGet(key string, fields []string) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getMap(key)
 	if err != nil {
 		return nil, err
@@ -76,6 +88,9 @@ func (e *engine) HMultiGet(key string, fields []string) ([]string, error) {
 }
 
 func (e *engine) HGetAll(key string) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getMap(key)
 	if err != nil {
 		return nil, err
@@ -94,6 +109,9 @@ func (e *engine) HGetAll(key string) ([]string, error) {
 }
 
 func (e *engine) HDelete(key string, fields []string) (int, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	mapString, err := e.getMap(key)
 	if err != nil {
 		return -1, err
