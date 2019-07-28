@@ -63,14 +63,18 @@ var keyCommand = "cmd"
 
 func (c *conn) serve(logger *logrus.Logger) {
 	connection := c.netConn
+	addr := connection.RemoteAddr().String()
+
+	logger.Debugf("Connection accepted: %s", addr)
 	defer func() {
+		logger.Debugf("Connection closed: %s", addr)
 		_ = connection.Close()
 	}()
 
 	for {
 		command, err := ReadCommand(connection)
 		if err != nil {
-			if isCommonNetReadError(err) {
+			if isCommonNetReadError(errors.Cause(err)) {
 				return
 			}
 			if ok := c.writeError(err, logger); !ok {
@@ -89,11 +93,7 @@ func (c *conn) serve(logger *logrus.Logger) {
 			continue
 		}
 
-		marshaled := result.Marshal()
-
-		commandLogger.Debugf("Result: %q", marshaled)
-
-		_, err = connection.Write(marshaled)
+		_, err = connection.Write(result.Marshal())
 		if err != nil {
 			c.writeError(err, commandLogger)
 			return
