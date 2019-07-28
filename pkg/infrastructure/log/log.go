@@ -29,7 +29,7 @@ func NewLogger(conf config.LogConf) *logrus.Logger {
 			TimestampFormat: "2006-01-02T15:04:05.000",
 		})
 	default:
-		logrus.Panic(errors.Errorf("Unknown log format: %s", conf.Format))
+		logrus.Panic(errors.Errorf("unknown log format: %s", conf.Format))
 	}
 
 	return log

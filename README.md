@@ -15,11 +15,11 @@ can be used to communicate with the server.
 
 ## Configuration
 Server is configured via environment variables.   
-* `SERVER_PORT` sets server port. Defaults ot `9876`. 
+* `SERVER_PORT` sets server port. Default is `9876`.
 Example: `SERVER_PORT=7000`
-* `LOG_LEVEL` sets log level. Possible values are [logrus](https://github.com/sirupsen/logrus) log levels. 
+* `LOG_LEVEL` sets log level. Default is `info` Possible values are [logrus](https://github.com/sirupsen/logrus) log levels. 
 Example: `LOG_LEVEL=warn`
-* `LOG_FORMAT` sets log format. Possible values are `json`, `text`. 
+* `LOG_FORMAT` sets log format. Default is `text` Possible values are `json`, `text`.
 Example: `LOG_FORMAT=json`
 
 # Building and running locally
@@ -28,7 +28,12 @@ build and run the server locally with [goreleaser](https://github.com/goreleaser
 
 `./build-local/build.sh` builds the project.
 
-`./build-local/run.sh` runs the project in development mode.
+`./build-local/run.sh` runs the project in default configuration.
+
+#Releases
+Releases are available in [github releases](https://github.com/AntonRutkevich/simple-memcache/releases).
+
+Just run the binary.
 
 ## Possible improvements
 ### Features

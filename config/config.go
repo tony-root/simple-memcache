@@ -8,17 +8,17 @@ import (
 )
 
 type ServerConf struct {
-	Port string `validate:"required,numeric"`
+	Port string `validate:"omitempty,numeric"`
 }
 
 type LogConf struct {
-	Level  string `validate:"required,oneof=error warn info debug"`
-	Format string `validate:"required,oneof=text json"`
+	Level  string `validate:"omitempty,oneof=error warn info debug"`
+	Format string `validate:"omitempty,oneof=text json"`
 }
 
 type Config struct {
-	Server ServerConf `validate:"required"`
-	Log    LogConf    `validate:"required"`
+	Server ServerConf
+	Log    LogConf
 }
 
 func MustLoad() *Config {
@@ -35,6 +35,18 @@ func MustLoad() *Config {
 
 	if err := validator.New().Struct(&config); err != nil {
 		logrus.Panic(errors.WithMessage(err, "invalid config"))
+	}
+
+	if config.Log.Level == "" {
+		config.Log.Level = "info"
+	}
+
+	if config.Log.Format == "" {
+		config.Log.Format = "text"
+	}
+
+	if config.Server.Port == "" {
+		config.Server.Port = "9876"
 	}
 
 	return &config

@@ -3,8 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SCRIPT_DIR=${DIR}
 
-source ${SCRIPT_DIR}/local.sh
-
 UNAME_OUT="$(uname -s)"
 case "${UNAME_OUT}" in
     Linux*)     machine=linux_amd64;;
