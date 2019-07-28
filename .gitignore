@@ -12,7 +12,6 @@
 *.out
 
 # Local build scripts
-build-local/
 
 # Output of goreleaser
 dist/

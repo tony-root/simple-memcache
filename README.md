@@ -22,6 +22,14 @@ Example: `LOG_LEVEL=warn`
 * `LOG_FORMAT` sets log format. Possible values are `json`, `text`. 
 Example: `LOG_FORMAT=json`
 
+# Building and running locally
+`build-local` directory contains simple scripts to 
+build and run the server locally with [goreleaser](https://github.com/goreleaser/goreleaser).
+
+`./build-local/build.sh` builds the project.
+
+`./build-local/run.sh` runs the project in development mode.
+
 ## Possible improvements
 ### Features
  * Active cleanup of expired keys. 
@@ -43,7 +51,6 @@ Currently memory allocated by list entries is not cleaned up until the list key 
 * Add panic handling
 * Add graceful server shutdown
 * Refine handling of connection read/write errors: which are fine skip and close connection?
-
 
 ## Commands
 The list of commands is a subset of Redis commands, 
