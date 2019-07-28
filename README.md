@@ -1,6 +1,7 @@
 # Simple in-memory cache
 
-My implementation of a Redis-like in-memory cache.
+My implementation of a Redis-like in-memory cache server.
+Client is out of scope due to time constraints, but any redis client can be used.
 
 ## Overview
 Basically, a subset of Redis functionality. API-wise.    
@@ -8,10 +9,63 @@ Supports values of types `string`, `list`, `hash`.
 Supports Per-key TTL.   
 Supports basic set of CRUD commands for each type.   
 
+## Demo
+
+Running server 
+```
+./memcache
+```
+
+Interaction via redis-cli
+```
+./redis-cli -p 9876
+127.0.0.1:9876> SET X 42
+OK
+127.0.0.1:9876> GET X
+"42"
+127.0.0.1:9876> EXPIRE X 30
+(integer) 1
+127.0.0.1:9876> TTL X
+(integer) 23
+127.0.0.1:9876> TTL X
+(integer) 8
+127.0.0.1:9876> TTL X
+(integer) -2
+127.0.0.1:9876> HMSET dict a 1 b 2 c 3
+OK
+127.0.0.1:9876> HGETALL dict
+1) "b"
+2) "2"
+3) "c"
+4) "3"
+5) "a"
+6) "1"
+127.0.0.1:9876> LPUSH list 1 2 3 4 5 6
+(integer) 6
+127.0.0.1:9876> LRANGE list 0 -1
+1) "6"
+2) "5"
+3) "4"
+4) "3"
+5) "2"
+6) "1"
+127.0.0.1:9876> RPOP list
+"1"
+127.0.0.1:9876> RPOP list
+"2"
+127.0.0.1:9876> RPOP list
+"3"
+127.0.0.1:9876> RPOP no-list
+(nil)
+127.0.0.1:9876> RPOP list another args
+(error) ARGS_NUM RPOP requires 1 args exactly, got 3
+```
+
 ## Protocol
 [RESP](https://redis.io/topics/protocol) was chosen as a protocol for communicating with clients. 
 It's a simple, solid, low-overhead protocol. Another benefit is that `redis-cli` or any other Redis client
-can be used to communicate with the server.  
+can be used to communicate with the server.
+It will fail in some error cases, for example because COMMAND command is not implemented.
 
 ## Configuration
 Server is configured via environment variables.   
