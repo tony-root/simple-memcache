@@ -84,7 +84,7 @@ build and run the server locally with [goreleaser](https://github.com/goreleaser
 
 `./build-local/run.sh` runs the project in default configuration.
 
-#Releases
+# Releases
 Releases are available in [github releases](https://github.com/AntonRutkevich/simple-memcache/releases).
 
 Just run the binary.
