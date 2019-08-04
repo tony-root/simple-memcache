@@ -48,17 +48,17 @@ func (e *engine) saveKeyExpire(key string, seconds int) {
 	e.expires[key] = time.Now().Add(time.Duration(seconds) * time.Second)
 }
 
-func (e *engine) getTtl(key string) int {
+func (e *engine) getTtl(key string) (int, error) {
 	value := e.getKeyCheckExpire(key)
 	if value == nil {
-		return -2
+		return -1, ErrTtlKeyNotFound
 	}
 
 	if _, ok := e.expires[key]; !ok {
-		return -1
+		return -1, ErrNoTtlForKey
 	}
 
-	return int(e.expires[key].Sub(time.Now()).Seconds())
+	return int(e.expires[key].Sub(time.Now()).Seconds()), nil
 }
 
 func (e *engine) setString(key, value string) {
