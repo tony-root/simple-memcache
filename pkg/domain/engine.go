@@ -5,26 +5,16 @@ import (
 	"time"
 )
 
-type expirationUnixNano int64
-
-func unixNano(time time.Time) expirationUnixNano {
-	return expirationUnixNano(time.UnixNano())
-}
-
-func (ex expirationUnixNano) seconds() int {
-	return int(ex / 1000000000)
-}
-
 type engine struct {
 	storage map[string]interface{}
-	expires map[string]expirationUnixNano
-	mu sync.Mutex
+	expires map[string]time.Time
+	mu      sync.Mutex
 }
 
 func NewEngine() *engine {
 	return &engine{
 		storage: map[string]interface{}{},
-		expires: map[string]expirationUnixNano{},
+		expires: map[string]time.Time{},
 	}
 }
 
@@ -39,7 +29,7 @@ func (e *engine) getKeyCheckExpire(key string) interface{} {
 		return value
 	}
 
-	if expiresAt < unixNano(time.Now()) {
+	if expiresAt.Before(time.Now()) {
 		e.setKeyClearExpire(key, nil)
 		return nil
 	}
@@ -55,7 +45,7 @@ func (e *engine) setKeyClearExpire(key string, value interface{}) {
 }
 
 func (e *engine) saveKeyExpire(key string, seconds int) {
-	e.expires[key] = unixNano(time.Now().Add(time.Duration(seconds) * time.Second))
+	e.expires[key] = time.Now().Add(time.Duration(seconds) * time.Second)
 }
 
 func (e *engine) getTtl(key string) int {
@@ -68,7 +58,7 @@ func (e *engine) getTtl(key string) int {
 		return -1
 	}
 
-	return (e.expires[key] - unixNano(time.Now())).seconds()
+	return int(e.expires[key].Sub(time.Now()).Seconds())
 }
 
 func (e *engine) setString(key, value string) {
