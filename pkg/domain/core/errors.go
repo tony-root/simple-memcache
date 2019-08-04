@@ -1,14 +1,16 @@
 package core
 
+import "github.com/pkg/errors"
+
 type ClientErrCode string
 
-type clientError interface {
-	ClientError() (bool, ClientErrCode)
+type ClientError interface {
+	ClientErrorCode() ClientErrCode
 }
 
-func IsClientError(err error) (bool, ClientErrCode) {
-	if e, ok := err.(clientError); ok {
-		return e.ClientError()
+func GetClientErrorCode(err error) ClientErrCode {
+	if e, ok := errors.Cause(err).(ClientError); ok {
+		return e.ClientErrorCode()
 	}
-	return false, ""
+	return ""
 }

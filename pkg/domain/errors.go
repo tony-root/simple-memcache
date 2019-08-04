@@ -19,11 +19,11 @@ func (e *typeMismatch) Error() string {
 	return fmt.Sprintf("%s is not of %s type", e.key, e.expectedType)
 }
 
-func (e *typeMismatch) ClientError() (bool, core.ClientErrCode) {
-	return true, core.ClientErrCode("TYPE_MISMATCH")
+func (e *typeMismatch) ClientErrorCode() core.ClientErrCode {
+	return "TYPE_MISMATCH"
 }
 
 var (
 	ErrTtlKeyNotFound = errors.New("no key found")
-	ErrNoTtlForKey = errors.New("no ttl for key")
+	ErrNoTtlForKey    = errors.New("no ttl for key")
 )
