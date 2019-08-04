@@ -71,43 +71,38 @@ func (e *engine) getString(key string) (string, error) {
 		return "", nil
 	}
 
-	strValue, ok := value.(string)
+	casted, ok := value.(string)
 	if !ok {
 		return "", errTypeMismatch(key, "string")
 	}
 
-	return strValue, nil
+	return casted, nil
 }
 
 func (e *engine) getOrCreateList(key string) ([]string, error) {
-	listInterface := e.getKeyCheckExpire(key)
-	if listInterface == nil {
+	value := e.getKeyCheckExpire(key)
+	if value == nil {
 		return []string{}, nil
 	}
 
-	return castToList(key, listInterface)
+	return castToList(key, value)
 }
 
 func (e *engine) getList(key string) ([]string, error) {
-	listInterface := e.getKeyCheckExpire(key)
-	if listInterface == nil {
-		return nil, nil
-	}
-
-	return castToList(key, listInterface)
+	return castToList(key, e.getKeyCheckExpire(key))
 }
 
-func castToList(key string, listInterface interface{}) ([]string, error) {
-	if listInterface == nil {
+func castToList(key string, value interface{}) ([]string, error) {
+	if value == nil {
 		return nil, nil
 	}
 
-	listString, ok := listInterface.([]string)
+	casted, ok := value.([]string)
 	if !ok {
 		return nil, errTypeMismatch(key, "list")
 	}
 
-	return listString, nil
+	return casted, nil
 }
 
 func (e *engine) setList(key string, l []string) {
@@ -115,36 +110,31 @@ func (e *engine) setList(key string, l []string) {
 }
 
 func (e *engine) getOrCreateMap(key string) (map[string]string, error) {
-	mapInterface := e.getKeyCheckExpire(key)
-	if mapInterface == nil {
+	value := e.getKeyCheckExpire(key)
+	if value == nil {
 		return map[string]string{}, nil
 	}
 
-	return castToMap(key, mapInterface)
+	return castToMap(key, value)
 }
 
 func (e *engine) getMap(key string) (map[string]string, error) {
-	mapInterface := e.getKeyCheckExpire(key)
-	if mapInterface == nil {
-		return nil, nil
-	}
-
-	return castToMap(key, mapInterface)
+	return castToMap(key, e.getKeyCheckExpire(key))
 }
 
 func (e *engine) setMap(key string, m map[string]string) {
 	e.storage[key] = m
 }
 
-func castToMap(key string, mapInterface interface{}) (map[string]string, error) {
-	if mapInterface == nil {
+func castToMap(key string, value interface{}) (map[string]string, error) {
+	if value == nil {
 		return nil, nil
 	}
 
-	mapString, ok := mapInterface.(map[string]string)
+	casted, ok := value.(map[string]string)
 	if !ok {
 		return nil, errTypeMismatch(key, "map")
 	}
 
-	return mapString, nil
+	return casted, nil
 }
