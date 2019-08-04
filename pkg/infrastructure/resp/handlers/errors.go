@@ -5,7 +5,7 @@ import (
 	"github.com/antonrutkevich/simple-memcache/pkg/domain/core"
 )
 
-var argsNumErrCode = core.ClientErrCode("ARGS_NUM")
+const argsNumErrCode = core.ClientErrCode("ARGS_NUM")
 
 type noExactArgsNumMatch struct {
 	command      string
@@ -21,8 +21,8 @@ func (e *noExactArgsNumMatch) Error() string {
 	return fmt.Sprintf("%s requires %d args exactly, got %d", e.command, e.expectedArgs, e.gotArgs)
 }
 
-func (e *noExactArgsNumMatch) ClientError() (bool, core.ClientErrCode) {
-	return true, argsNumErrCode
+func (e *noExactArgsNumMatch) ClientErrorCode() core.ClientErrCode {
+	return argsNumErrCode
 }
 
 type notEnoughArgs struct {
@@ -39,8 +39,8 @@ func (e *notEnoughArgs) Error() string {
 	return fmt.Sprintf("%s requires at least %d args, got %d", e.command, e.minArgs, e.gotArgs)
 }
 
-func (e *notEnoughArgs) ClientError() (bool, core.ClientErrCode) {
-	return true, argsNumErrCode
+func (e *notEnoughArgs) ClientErrorCode() core.ClientErrCode {
+	return argsNumErrCode
 }
 
 type argsEven struct {
@@ -56,8 +56,8 @@ func (e *argsEven) Error() string {
 	return fmt.Sprintf("%s requires odd number of args, got %d", e.command, e.gotArgs)
 }
 
-func (e *argsEven) ClientError() (bool, core.ClientErrCode) {
-	return true, argsNumErrCode
+func (e *argsEven) ClientErrorCode() core.ClientErrCode {
+	return argsNumErrCode
 }
 
 type invalidInteger struct {
@@ -73,6 +73,6 @@ func (e *invalidInteger) Error() string {
 	return fmt.Sprintf("%s expects a valid integer, got '%s'", e.command, e.value)
 }
 
-func (e *invalidInteger) ClientError() (bool, core.ClientErrCode) {
-	return true, core.ClientErrCode("INVALID_INTEGER")
+func (e *invalidInteger) ClientErrorCode() core.ClientErrCode {
+	return "INVALID_INTEGER"
 }

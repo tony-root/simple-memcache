@@ -118,7 +118,7 @@ func isCommonNetReadError(err error) bool {
 
 // Returns false if error is fatal for connection.
 func (c *conn) writeError(err error, commandLogger *logrus.Logger) bool {
-	if ok, code := core.IsClientError(errors.Cause(err)); ok {
+	if code := core.GetClientErrorCode(err); code != "" {
 		if ok := c.writeClientErr(code, err, commandLogger); !ok {
 			return false
 		}
