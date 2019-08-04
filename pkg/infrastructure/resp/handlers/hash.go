@@ -33,7 +33,7 @@ func (s *hashApi) Set() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Int(wasNew), nil
+		return resp.RInt(wasNew), nil
 	})
 }
 
@@ -81,10 +81,10 @@ func (s *hashApi) Get() resp.Handler {
 		}
 
 		if value == "" {
-			return resp.Nil(), nil
+			return resp.RNil(), nil
 		}
 
-		return resp.BulkString(value), nil
+		return resp.RBulkString(value), nil
 	})
 }
 
@@ -102,7 +102,7 @@ func (s *hashApi) MultiGet() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Array(values), nil
+		return resp.RArray(values), nil
 	})
 }
 
@@ -119,7 +119,7 @@ func (s *hashApi) GetAll() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Array(values), nil
+		return resp.RArray(values), nil
 	})
 }
 
@@ -137,6 +137,6 @@ func (s *hashApi) Delete() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Int(numDeleted), nil
+		return resp.RInt(numDeleted), nil
 	})
 }

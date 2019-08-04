@@ -32,10 +32,10 @@ func (s *listApi) LeftPop() resp.Handler {
 		}
 
 		if result == "" {
-			return resp.Nil(), nil
+			return resp.RNil(), nil
 		}
 
-		return resp.BulkString(result), nil
+		return resp.RBulkString(result), nil
 	})
 }
 
@@ -53,10 +53,10 @@ func (s *listApi) RightPop() resp.Handler {
 		}
 
 		if result == "" {
-			return resp.Nil(), nil
+			return resp.RNil(), nil
 		}
 
-		return resp.BulkString(result), nil
+		return resp.RBulkString(result), nil
 	})
 }
 
@@ -74,7 +74,7 @@ func (s *listApi) LeftPush() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Int(listSize), nil
+		return resp.RInt(listSize), nil
 	})
 }
 
@@ -92,7 +92,7 @@ func (s *listApi) RightPush() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Int(listSize), nil
+		return resp.RInt(listSize), nil
 	})
 }
 
@@ -119,6 +119,6 @@ func (s *listApi) Range() resp.Handler {
 			return nil, err
 		}
 
-		return resp.Array(values), nil
+		return resp.RArray(values), nil
 	})
 }

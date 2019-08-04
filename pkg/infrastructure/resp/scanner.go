@@ -10,7 +10,7 @@ import (
 var maxArrayLength = 1000
 var maxStringLength = 1024 * 1024 // 1mb
 
-func ReadCommand(c net.Conn) (*rArray, error) {
+func ReadCommand(c net.Conn) (*RArray, error) {
 	reader := bufio.NewReader(c)
 
 	arrayLen, err := readArrayLen(reader)
@@ -33,7 +33,9 @@ func ReadCommand(c net.Conn) (*rArray, error) {
 		entries = append(entries, bulkString)
 	}
 
-	return Array(entries), nil
+	array := RArray(entries)
+
+	return &array, nil
 }
 
 func readArrayLen(reader *bufio.Reader) (int, error) {
