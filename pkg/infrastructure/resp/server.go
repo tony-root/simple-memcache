@@ -157,7 +157,7 @@ type Req struct {
 	Args    []string
 }
 
-func NewReq(reqArray *rArray) *Req {
+func NewReq(reqArray *RArray) *Req {
 	rawArgs := reqArray.Values()
 	return &Req{Command: rawArgs[0], Args: rawArgs[1:]}
 }

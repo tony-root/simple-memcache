@@ -13,73 +13,49 @@ type RType interface {
 }
 
 // String
-type rString struct {
-	value string
-}
+type RString string
 
-func String(value string) *rString {
-	return &rString{value: value}
-}
-
-func (r rString) Marshal() []byte {
-	return []byte("+" + r.value + delimiter)
+func (r RString) Marshal() []byte {
+	return []byte("+" + string(r) + delimiter)
 }
 
 // Bulk String
-type rBulkString struct {
-	value string
-}
+type RBulkString string
 
-func BulkString(value string) *rBulkString {
-	return &rBulkString{value: value}
-}
-
-func (r rBulkString) Marshal() []byte {
-	byteLen := len(r.value)
+func (r RBulkString) Marshal() []byte {
+	byteLen := len(r)
 	if byteLen == 0 {
 		return nilValue
 	}
 
-	return []byte("$" + strconv.Itoa(byteLen) + delimiter + r.value + delimiter)
+	return []byte("$" + strconv.Itoa(byteLen) + delimiter + string(r) + delimiter)
 }
 
 // Int
-type rInt struct {
-	value int
-}
+type RInt int
 
-func Int(value int) *rInt {
-	return &rInt{value: value}
-}
-
-func (r rInt) Marshal() []byte {
-	return []byte(":" + strconv.Itoa(r.value) + delimiter)
+func (r RInt) Marshal() []byte {
+	return []byte(":" + strconv.Itoa(int(r)) + delimiter)
 }
 
 // Array
-type rArray struct {
-	values []string
-}
+type RArray []string
 
-func Array(value []string) *rArray {
-	return &rArray{values: value}
-}
-
-func (r rArray) Values() []string {
-	return r.values
+func (r RArray) Values() []string {
+	return r
 }
 
 // TODO: potential hardcode-based optimization for empty/short list
-func (r rArray) Marshal() []byte {
-	numItems := len(r.values)
+func (r RArray) Marshal() []byte {
+	numItems := len(r)
 	var builder strings.Builder
 
 	builder.WriteByte('*')
 	builder.WriteString(strconv.Itoa(numItems))
 	builder.WriteString(delimiter)
 
-	for _, v := range r.values {
-		builder.Write(BulkString(v).Marshal())
+	for _, v := range r {
+		builder.Write(RBulkString(v).Marshal())
 	}
 
 	return []byte(builder.String())
@@ -88,8 +64,8 @@ func (r rArray) Marshal() []byte {
 // Nil
 type rNil struct{}
 
-func Nil() *rNil {
-	return &rNil{}
+func RNil() rNil {
+	return rNil{}
 }
 
 func (rNil) Marshal() []byte {
@@ -102,8 +78,8 @@ func MarshalError(errorMessage string) []byte {
 }
 
 // Predefined values
-var rOK = rString{value: "OK"}
+const rOK = RString("OK")
 
-func OK() *rString {
-	return &rOK
+func OK() RString {
+	return rOK
 }

@@ -47,9 +47,9 @@ func (s *stringApi) Get() resp.Handler {
 		}
 
 		if result == "" {
-			return resp.Nil(), nil
+			return resp.RNil(), nil
 		}
 
-		return resp.BulkString(result), nil
+		return resp.RBulkString(result), nil
 	})
 }

@@ -28,7 +28,7 @@ func (s *keyApi) Delete() resp.Handler {
 
 		numDeleted := s.engine.Delete(keys)
 
-		return resp.Int(numDeleted), nil
+		return resp.RInt(numDeleted), nil
 	})
 }
 
@@ -47,7 +47,7 @@ func (s *keyApi) Expire() resp.Handler {
 
 		timeoutSet := s.engine.Expire(key, seconds)
 
-		return resp.Int(timeoutSet), nil
+		return resp.RInt(timeoutSet), nil
 	})
 }
 
@@ -59,6 +59,6 @@ func (s *keyApi) Ttl() resp.Handler {
 
 		key := req.Args[0]
 
-		return resp.Int(s.engine.Ttl(key)), nil
+		return resp.RInt(s.engine.Ttl(key)), nil
 	})
 }
