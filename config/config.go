@@ -22,7 +22,15 @@ type Config struct {
 }
 
 func MustLoad() *Config {
-	var config Config
+	var config Config = Config{
+		Server: ServerConf{
+			Port: "9876",
+		},
+		Log: LogConf{
+			Level:  "info",
+			Format: "text",
+		},
+	}
 
 	// TODO: check how to set up mapping rule automatically
 	MustBindEnv("server.port", "SERVER_PORT")
@@ -35,18 +43,6 @@ func MustLoad() *Config {
 
 	if err := validator.New().Struct(&config); err != nil {
 		logrus.Panic(errors.WithMessage(err, "invalid config"))
-	}
-
-	if config.Log.Level == "" {
-		config.Log.Level = "info"
-	}
-
-	if config.Log.Format == "" {
-		config.Log.Format = "text"
-	}
-
-	if config.Server.Port == "" {
-		config.Server.Port = "9876"
 	}
 
 	return &config
