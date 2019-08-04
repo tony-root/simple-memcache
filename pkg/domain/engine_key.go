@@ -3,7 +3,7 @@ package domain
 type KeyEngine interface {
 	Delete(keys []string) int
 	Expire(key string, seconds int) int
-	Ttl(key string) int
+	Ttl(key string) (int, error)
 }
 
 func (e *engine) Delete(keys []string) int {
@@ -36,7 +36,7 @@ func (e *engine) Expire(key string, seconds int) int {
 	return 1
 }
 
-func (e *engine) Ttl(key string) int {
+func (e *engine) Ttl(key string) (int, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 

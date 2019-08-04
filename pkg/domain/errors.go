@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 	"github.com/antonrutkevich/simple-memcache/pkg/domain/core"
 )
@@ -21,3 +22,8 @@ func (e *typeMismatch) Error() string {
 func (e *typeMismatch) ClientError() (bool, core.ClientErrCode) {
 	return true, core.ClientErrCode("TYPE_MISMATCH")
 }
+
+var (
+	ErrTtlKeyNotFound = errors.New("no key found")
+	ErrNoTtlForKey = errors.New("no ttl for key")
+)

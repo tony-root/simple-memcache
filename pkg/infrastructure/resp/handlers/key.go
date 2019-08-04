@@ -40,12 +40,12 @@ func (s *keyApi) Expire() resp.Handler {
 
 		key := req.Args[0]
 
-		seconds, err := parseInt(req, req.Args[1])
-		if err != nil {
-			return nil, err
+		seconds := parseInt(req, req.Args[1])
+		if seconds == nil {
+			return nil, errInvalidInteger(req.Command, req.Args[1])
 		}
 
-		timeoutSet := s.engine.Expire(key, seconds)
+		timeoutSet := s.engine.Expire(key, *seconds)
 
 		return resp.RInt(timeoutSet), nil
 	})
@@ -57,8 +57,16 @@ func (s *keyApi) Ttl() resp.Handler {
 			return nil, err
 		}
 
-		key := req.Args[0]
+		ttl, err := s.engine.Ttl(req.Args[0])
+		if err != nil {
+			if err == domain.ErrNoTtlForKey {
+				return resp.RInt(-1), nil
+			}
+			if err == domain.ErrTtlKeyNotFound {
+				return resp.RInt(-2), nil
+			}
+		}
 
-		return resp.RInt(s.engine.Ttl(key)), nil
+		return resp.RInt(ttl), nil
 	})
 }

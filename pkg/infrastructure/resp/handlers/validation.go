@@ -26,10 +26,10 @@ func validateArgsOdd(req *resp.Req) error {
 	return nil
 }
 
-func parseInt(req *resp.Req, stringInt string) (int, error) {
+func parseInt(req *resp.Req, stringInt string) *int {
 	integer, err := strconv.Atoi(stringInt)
 	if err != nil {
-		return -1, errInvalidInteger(req.Command, stringInt)
+		return nil
 	}
-	return integer, nil
+	return &integer
 }

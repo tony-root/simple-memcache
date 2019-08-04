@@ -104,17 +104,17 @@ func (s *listApi) Range() resp.Handler {
 
 		key := req.Args[0]
 
-		min, err := parseInt(req, req.Args[1])
-		if err != nil {
-			return nil, err
+		min := parseInt(req, req.Args[1])
+		if min == nil {
+			return nil, errInvalidInteger(req.Command, req.Args[1])
 		}
 
-		max, err := parseInt(req, req.Args[2])
-		if err != nil {
-			return nil, err
+		max := parseInt(req, req.Args[2])
+		if max == nil {
+			return nil, errInvalidInteger(req.Command, req.Args[1])
 		}
 
-		values, err := s.engine.LRange(key, min, max)
+		values, err := s.engine.LRange(key, *min, *max)
 		if err != nil {
 			return nil, err
 		}
