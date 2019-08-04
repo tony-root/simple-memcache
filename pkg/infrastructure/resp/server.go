@@ -8,7 +8,7 @@ import (
 	"net"
 )
 
-var respDefaultPort = "9876"
+const respDefaultPort = "9876"
 
 type Server struct {
 	Addr    string
